@@ -137,19 +137,19 @@ public class Main {
                 .forEach(System.out::println);
     }
 
+    public double countAverageSalary(Company company) {
+        return company.getEmployees().stream().mapToDouble(e -> e.getSalary()).sum()
+                / company.getEmployees().size();
+    }
+
     public void averageSalaryInCompany() {
         System.out.println(">AVERAGE EARNINGS PER EMPLOYEE! ");
         Comparator<Company> companyEarningsPerEmployee =
                 (left, right) ->
-                        left.getEmployees().stream().mapToDouble(e -> e.getSalary()).sum()
-                                / left.getEmployees().size() <
-                                right.getEmployees().stream().mapToDouble(e -> e.getSalary()).sum()
-                                        / right.getEmployees().size() ? -1 : 1;
+                        (int) (countAverageSalary(left) - countAverageSalary(right));
 
         Stream.of(companies)
-                .map(company -> company.getName() + ": " +
-                        company.getEmployees().stream().mapToDouble(e -> e.getSalary()).sum()
-                                / company.getEmployees().size() + " $")
+                .map(company -> company.getName() + ": " +countAverageSalary(company) + " $")
                 .forEach(System.out::println);
 
         Stream.of(companies)
@@ -191,12 +191,13 @@ public class Main {
     public void showBenefitsIfPresent() {
         System.out.println("TIETO EMPLOYEES WHO HAS A BENEFIT!");
         Stream.of(tietoEmployees)
-                .forEach(e -> e.getBenefit().ifPresent(p -> System.out.println(e.getName() + " " + e.getSurname() + " has: " + p.getType())));
+                .forEach(e -> e.getBenefit()
+                        .ifPresent(p -> System.out.println(e.getName() + " " + e.getSurname() + " has: " + p.getType())));
     }
 
     public static void main(String[] args) {
         Main main = new Main();
-        main.showBenefitsIfPresent();
+        main.averageSalaryInCompany();
     }
 
 }
